@@ -19,16 +19,18 @@
     </div>
 
     <!-- Content Section -->
-    <div id="content" class="content">
+    <div id="sectionContent" class="content">
       <!-- Search Bar -->
       <div class="search-bar">
         <input type="text" id="searchBar" placeholder="Search..." oninput="filterTable()">
       </div>
       <h1 id="contentTitle"></h1>
-      <table id="contentTable" class="result-table">
-        <thead id="tableHead"><tr id="tableHeader"></tr></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
+      <div class="table-container">
+        <table id="contentTable" class="result-table">
+          <thead id="tableHead"><tr id="tableHeader"></tr></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
       <div id="buttons" class="button-container">
         <button id="addButton" class="button">Add New</button>
         <button id="saveButton" class="button">Save</button>
@@ -40,6 +42,7 @@
   <div id="messageContainer" class="message-container">
   </div>
 
+  <script src="/static/database.js"></script>
   <script src="/static/common.js"></script>
   <script src="/static/search.js"></script>
 

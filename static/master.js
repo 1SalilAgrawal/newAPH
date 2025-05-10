@@ -4,8 +4,10 @@ async function loadMasterContent() {
     contentTitle.textContent = "Master Database"; // Set the title for the content section
 
     // Fetch and display master records using the generic fetchTableData function
-    const { columns, data } = await fetchTableData("master");
+    const { columns, data } = await Database.fetchTableData("master");
 
     // Populate the table dynamically and make it editable
     populateEditableTable(columns, data, "contentTable", "/api/master");
+
+    showButtonContainer();
 }

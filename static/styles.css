@@ -8,39 +8,28 @@ body {
     height: 100vh; /* Full viewport height */
 }
 
-/* Redesigned Search Bar */
-#searchBar {
-    width: 100%;
-    padding: 10px 20px;
+.search-bar {
     display: flex;
-    justify-content: center; /* Center the search input */
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    margin-bottom: 20px; /* Add spacing below the search bar */
 }
 
-#searchInput {
-    width: 50%; /* Centered input with a fixed width */
+#searchBar {
+    width: 50%; /* Set a fixed width for the search bar */
     padding: 10px 15px;
     font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 25px; /* Rounded edges for a modern look */
+    border-radius: 25px; /* Rounded edges */
     outline: none;
     box-sizing: border-box;
     transition: all 0.3s ease; /* Smooth transition for focus effects */
 }
 
-#searchInput:focus {
+#searchBar:focus {
     border-color: #0056b3; /* Darker blue border on focus */
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Glow effect */
     background-color: #ffffff; /* White background on focus */
-}
-
-#searchIcon {
-    margin-left: -35px; /* Position the icon inside the input */
-    color: #aaa;
-    font-size: 18px;
-    pointer-events: none; /* Prevent interaction with the icon */
 }
 
 /* Main Container (Middle Section) */
@@ -55,7 +44,7 @@ body {
     width: 20%;
     background-color: #f4f4f4;
     border-right: 1px solid #ddd;
-    padding: 15px;
+    padding: 10px;
     box-sizing: border-box;
     overflow-y: auto; /* Sidebar scrollable if content overflows */
 }
@@ -79,42 +68,83 @@ body {
 }
 
 /* Content Section */
-#content {
-    flex: 1;
+#sectionContent {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
     padding: 10px;
     box-sizing: border-box;
-    overflow-y: auto; /* Content section scrollable */
+    overflow: auto;
 }
 
-#content h1 {
+.content h1 {
     font-size: 24px;
     color: #333;
     margin-top: 0;
 }
 
-.content .result-table th {
-  background-color: #2c3e50;
-  color: white;
+.content .table-container {
+    width: 100%;
+    display: flex;
+    overflow: auto;
+    border-radius: 8px; /* Rounded corners */
 }
 
-.content .result-table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
+/* General Table Styling */
 .content .result-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+    width: 100%;
+    flex: 1;
+    border-collapse: collapse; /* Remove gaps between borders */
+    background-color: #ffffff; /* White background for the table */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for a modern look */
+    border-radius: 8px; /* Rounded corners */
 }
 
-.content .result-table th,
+/* Table Header Styling */
+.content .result-table th {
+    position: sticky;
+    top: 0;
+    background-color: #007bff; /* Blue background for headers */
+    color: white; /* White text for contrast */
+    text-align: left;
+    padding: 6px; /* Add padding for better spacing */
+    text-transform: capitalize; /* Make header text uppercase */
+}
+
+/* Table Row Styling */
+.content .result-table tr:nth-child(even) {
+    background-color: #f9f9f9; /* Light gray background for even rows */
+}
+
+.content .result-table tr:nth-child(odd) {
+    background-color: #ffffff; /* White background for odd rows */
+}
+
+/* Table Cell Styling */
 .content .result-table td {
-  padding: 5px; /* Reduce padding */
-  text-align: left;
-  border: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  line-height: 1.2; /* Adjust line height for tighter spacing */
-  font-size: 14px; /* Smaller font size */
+    padding: 4px; /* Add padding for better spacing */
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Subtle border between rows */
+    font-size: 14px; /* Slightly smaller font size for cells */
+    color: #333; /* Dark gray text for readability */
+}
+
+/* Hover Effect for Rows */
+.content .result-table tr:hover {
+    background-color: #f1f1f1; /* Light gray background on hover */
+    cursor: pointer; /* Change cursor to pointer for interactivity */
+}
+
+/* Responsive Table Styling */
+@media (max-width: 768px) {
+    .content .result-table {
+        font-size: 12px; /* Reduce font size for smaller screens */
+    }
+
+    .content .result-table th,
+    .content .result-table td {
+        padding: 8px; /* Reduce padding for smaller screens */
+    }
 }
 
 .button-container {

@@ -24,6 +24,29 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+def get_auto_increment_field(conn, table_name):
+    """Retrieve the name of the auto-increment field for a given table."""
+    cursor = conn.cursor()
+
+    # Get the SQL definition of the table
+    cursor.execute(f"SELECT sql FROM sqlite_master WHERE type='table' AND name=?", (table_name,))
+    table_definition = cursor.fetchone()
+
+    if table_definition:
+        table_sql = table_definition[0].upper()
+
+        # Check if the table uses AUTOINCREMENT
+        if "AUTOINCREMENT" in table_sql:
+            # Get the column name of the primary key
+            cursor.execute(f"PRAGMA table_info({table_name})")
+            columns_info = cursor.fetchall()
+
+            for column in columns_info:
+                if column[5] == 1 and column[2].upper() == "INTEGER":  # Primary key and INTEGER type
+                    return column[1]  # Return the column name
+
+    return None  # No auto-increment field found
+
 # Endpoint to fetch both column names and data from a specified table
 @app.get("/api/{table_name}")
 def get_table_data_with_columns(table_name: str):
@@ -70,7 +93,14 @@ async def update_record(table_name: str, record_id: int, request: Request):
         values = list(updated_data.values())
         values.append(record_id)  # Add the record ID to the values list
 
-        query = f"UPDATE {table_name} SET {columns} WHERE id = ?"
+        query = ""
+        if (table_name == "master"):
+            query = f"UPDATE {table_name} SET {columns} WHERE accNo = ?"
+        else:
+            query = f"UPDATE {table_name} SET {columns} WHERE sNO = ?"
+    
+
+        print("table", table_name)  # Debugging log
         print("Generated SQL query:", query)  # Debugging log
         print("Values:", values)  # Debugging log
 
@@ -99,9 +129,10 @@ async def add_record(table_name: str, request: Request):
         new_data = await request.json()
         print("New data received:", new_data)  # Debugging log
 
-        # Exclude the 'id' column if it is auto-incremented
-        if "id" in new_data and not new_data["id"]:
-            del new_data["id"]
+        auto_increment_field = get_auto_increment_field(conn, table_name)
+        # Remove the auto-increment field from the data if it exists
+        if auto_increment_field and auto_increment_field in new_data:
+            del new_data[auto_increment_field]
 
         # Build the SQL query dynamically
         columns = ", ".join(new_data.keys())
@@ -110,6 +141,7 @@ async def add_record(table_name: str, request: Request):
 
         query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
+        print("Generated SQL query:", query)  # Debugging log
         cursor.execute(query, values)
         conn.commit()
         conn.close()
@@ -119,15 +151,15 @@ async def add_record(table_name: str, request: Request):
         print("Database error:", e)  # Log the error
         raise HTTPException(status_code=500, detail=f"Database error: {e}")
 
-@app.get("/api/details/{master_id}")
-def get_details(master_id: int):
-    """Fetch both column names and detail records for a given master record ID."""
+@app.get("/api/details/{partyNo}")
+def get_details(partyNo: str):
+    """Fetch both column names and detail records for a given party number."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Fetch detail records for the given master ID
-        cursor.execute("SELECT * FROM details WHERE master_id = ?", (master_id,))
+        # Fetch detail records for the given party number
+        cursor.execute("SELECT * FROM details WHERE partyNo = ?", (partyNo,))
         records = cursor.fetchall()
         column_names = [description[0] for description in cursor.description]  # Get column names
         conn.close()

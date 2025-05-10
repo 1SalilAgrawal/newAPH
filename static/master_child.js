@@ -1,21 +1,17 @@
 async function loadMasterChildContent() {
-    const { columns: masterColumns, data: masterData } = await fetchTableData("master"); // Fetch master records
     const contentTableHead = document.querySelector("#contentTable thead");
     const contentTableBody = document.querySelector("#contentTable tbody");
 
     // Clear existing rows and headers
     clearTable(contentTableHead, contentTableBody);
 
-    // Populate master table headers dynamically
+    const { columns: masterColumns, data: masterData } = 
+                await Database.fetchTableData("master");
     populateTableHeaders(contentTableHead, ["Expand", ...masterColumns]);
 
-    // Populate master rows dynamically
     masterData.forEach(record => {
         const masterRow = createMasterRow(record, masterColumns);
-        const detailRow = createDetailPlaceholderRow(masterColumns.length);
-
-        contentTableBody.appendChild(masterRow);
-        contentTableBody.appendChild(detailRow);
+        contentTableBody.appendChild(masterRow); // Only append the master row
     });
 
     // Attach event listeners to expand buttons
@@ -42,7 +38,7 @@ function createMasterRow(record, columns) {
     const row = document.createElement("tr");
     row.innerHTML = `
         <td>
-            <button class="expand-btn" data-master-id="${record.id}">+</button>
+            <button class="expand-btn" data-master-id="${record.accName}">+</button>
         </td>
         ${columns.map(col => `<td>${record[col] || ""}</td>`).join("")}
     `;
@@ -73,33 +69,40 @@ function createDetailPlaceholderRow(colspan) {
 function attachExpandButtonListeners() {
     document.querySelectorAll(".expand-btn").forEach(button => {
         button.addEventListener("click", async (event) => {
-            const masterId = event.target.getAttribute("data-master-id");
-            const detailRow = event.target.closest("tr").nextElementSibling;
+            const masterAccName = event.target.getAttribute("data-master-id");
+            const masterRow = event.target.closest("tr");
 
-            if (detailRow.style.display === "none") {
-                await expandDetailRow(masterId, detailRow, event.target);
+            // Check if the next sibling is a detail row
+            let detailRow = masterRow.nextElementSibling;
+            if (detailRow && detailRow.classList.contains("detail-row")) {
+                if (detailRow.style.display !== "none") {
+                    collapseDetailRow(detailRow, event.target);
+                } else {
+                    await expandDetailRow(masterAccName, masterRow, event.target);
+                }
             } else {
-                collapseDetailRow(detailRow, event.target);
+                // Create and expand the detail row if it doesn't exist
+                await expandDetailRow(masterAccName, masterRow, event.target);
             }
         });
     });
 }
 
 // Helper function to expand a detail row
-async function expandDetailRow(masterId, detailRow, button) {
-    const { columns: detailColumns, data: detailData } = await fetchTableData(`details/${masterId}`);
-    const detailTableHead = detailRow.querySelector(".detail-table thead");
-    const detailTableBody = detailRow.querySelector(".detail-table tbody");
+async function expandDetailRow(masterAccName, masterRow, button) {
+    // Check if the detail row already exists
+    let detailRow = masterRow.nextElementSibling;
+    if (!detailRow || !detailRow.classList.contains("detail-row")) {
+        // Use the helper function to create the detail row
+        detailRow = createDetailPlaceholderRow(masterRow.children.length);
+        masterRow.parentNode.insertBefore(detailRow, masterRow.nextElementSibling);
+    }
 
-    // Populate detail table headers dynamically
-    populateTableHeaders(detailTableHead, detailColumns);
+    // Fetch detail data for the specific masterAccName
+    const { columns: detailColumns, data: detailData } = await Database.fetchTableData(`details/${masterAccName}`);
 
-    // Populate detail rows dynamically
-    detailTableBody.innerHTML = detailData.map(detail => `
-        <tr>
-            ${detailColumns.map(col => `<td>${detail[col] || ""}</td>`).join("")}
-        </tr>
-    `).join("");
+    // Populate the detail table with the filtered data
+    populateDetailTable(detailRow, detailColumns, detailData);
 
     detailRow.style.display = ""; // Show the detail row
     button.textContent = "-"; // Change button to collapse
@@ -109,4 +112,36 @@ async function expandDetailRow(masterId, detailRow, button) {
 function collapseDetailRow(detailRow, button) {
     detailRow.style.display = "none"; // Hide the detail row
     button.textContent = "+"; // Change button to expand
+}
+
+// Helper function to create the detail table structure
+function createDetailTable(detailRow, masterId) {
+    detailRow.innerHTML = `
+        <td colspan="100%">
+            <table class="detail-table">
+                <thead>
+                    <!-- Detail headers will be dynamically populated -->
+                </thead>
+                <tbody>
+                    <!-- Detail rows will be dynamically populated -->
+                </tbody>
+            </table>
+        </td>
+    `;
+}
+
+// Helper function to populate the detail table
+function populateDetailTable(detailRow, detailColumns, detailData) {
+    const detailTableHead = detailRow.querySelector(".detail-table thead");
+    const detailTableBody = detailRow.querySelector(".detail-table tbody");
+
+    // Populate detail table headers
+    populateTableHeaders(detailTableHead, detailColumns);
+
+    // Populate detail table rows
+    detailTableBody.innerHTML = detailData.map(detail => `
+        <tr>
+            ${detailColumns.map(col => `<td>${detail[col] || ""}</td>`).join("")}
+        </tr>
+    `).join("");
 }

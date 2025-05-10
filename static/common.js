@@ -12,7 +12,7 @@ document.querySelectorAll('#sidebar a').forEach(link => {
 
 // Function to dynamically load content based on the menu item
 function loadContent(contentId) {
-    const content = document.getElementById("content");
+    const content = document.getElementById("sectionContent");
 
     // Hide all buttons by default
     hideAllButtons();
@@ -21,17 +21,11 @@ function loadContent(contentId) {
         loadScript('/static/master.js', () => {
             console.log('Master script loaded');
             loadMasterContent();
-
-            // Show the button container for the master page
-            showButtonContainer();
         });
     } else if (contentId === 'details') {
         loadScript('/static/details.js', () => {
             console.log('Details script loaded');
             loadDetailsContent();
-
-            // Show the button container for the details page
-            showButtonContainer();
         });
     } else if (contentId === 'reports') {
         loadScript('/static/reports.js', () => {
@@ -58,22 +52,6 @@ function loadScript(src, callback) {
     script.src = src;
     script.onload = callback;
     document.body.appendChild(script);
-}
-
-// Generic function to fetch and display table records dynamically
-async function fetchTableData(tableName) {
-    try {
-        const response = await fetch(`/api/${tableName}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch records for table ${tableName}: ${response.statusText}`);
-        }
-        const { columns, data } = await response.json();
-        return { columns, data };
-    } catch (error) {
-        console.error(`Error fetching or rendering table ${tableName}:`, error);
-        alert(`Failed to load data for table ${tableName}. Please check the console for details.`);
-        return { columns: [], data: [] };
-    }
 }
 
 // Function to populate an editable table dynamically
@@ -121,7 +99,7 @@ function createEditableRow(record, columns) {
     row.dataset.originalData = JSON.stringify(record); // Store original data for comparison
 
     row.innerHTML = columns.map(col => {
-        if (col === "id") {
+        if (col === "accNo" || col === "sNO") {
             // ID column is not editable
             return `<td>${record[col] || ""}</td>`;
         } else {
@@ -157,7 +135,7 @@ function enableAddNewRow(columns, tableId, saveEndpoint) {
 function createNewRow(columns) {
     const newRow = document.createElement("tr");
     newRow.innerHTML = columns.map(col => {
-        if (col === "id") {
+        if (col === "accNo" || col === "sNO") {
             // Leave the ID column empty for new rows
             return `<td></td>`;
         } else {
@@ -215,12 +193,13 @@ function enableSaveButton(tableId, saveEndpoint) {
 
             // Save changed rows
             for (const record of updatedData) {
-                if (!record.id) {
+                let id = saveEndpoint === "/api/master" ? record.accNo : record.sNO;
+                if (!id) {
                     console.error("Missing ID for record:", record);
                     continue; // Skip rows without an ID
                 }
 
-                const response = await fetch(`${saveEndpoint}/${record.id}`, {
+                const response = await fetch(`${saveEndpoint}/${id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
@@ -229,7 +208,7 @@ function enableSaveButton(tableId, saveEndpoint) {
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Failed to save record with ID ${record.id}: ${response.statusText}`);
+                    throw new Error(`Failed to save record with ID ${id}: ${response.statusText}`);
                 }
             }
 
