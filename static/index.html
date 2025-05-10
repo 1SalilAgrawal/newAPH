@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Content</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <!-- Main Container -->
+  <div id="mainContainer">
+    <!-- Sidebar Section -->
+    <div id="sidebar">
+      <h3>Navigation</h3>
+      <a href="#" data-content="master">Master Database</a>
+      <a href="#" data-content="details">Details Database</a>
+      <a href="#" data-content="master_child">Master Detail Databse</a>
+      <a href="#" data-content="reports">Reports</a>
+    </div>
+
+    <!-- Content Section -->
+    <div id="content" class="content">
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <input type="text" id="searchBar" placeholder="Search..." oninput="filterTable()">
+      </div>
+      <h1 id="contentTitle"></h1>
+      <table id="contentTable" class="result-table">
+        <thead id="tableHead"><tr id="tableHeader"></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div id="buttons" class="button-container">
+        <button id="addButton" class="button">Add New</button>
+        <button id="saveButton" class="button">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Section -->
+  <div id="messageContainer" class="message-container">
+  </div>
+
+  <script src="/static/common.js"></script>
+  <script src="/static/search.js"></script>
+
+</body>
+</html>

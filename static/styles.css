@@ -1,0 +1,174 @@
+/* General Reset */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+}
+
+/* Redesigned Search Bar */
+#searchBar {
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center; /* Center the search input */
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+#searchInput {
+    width: 50%; /* Centered input with a fixed width */
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 25px; /* Rounded edges for a modern look */
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Smooth transition for focus effects */
+}
+
+#searchInput:focus {
+    border-color: #0056b3; /* Darker blue border on focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Glow effect */
+    background-color: #ffffff; /* White background on focus */
+}
+
+#searchIcon {
+    margin-left: -35px; /* Position the icon inside the input */
+    color: #aaa;
+    font-size: 18px;
+    pointer-events: none; /* Prevent interaction with the icon */
+}
+
+/* Main Container (Middle Section) */
+#mainContainer {
+    display: flex;
+    flex: 1; /* Take up remaining space */
+    overflow: hidden; /* Prevent overflow */
+}
+
+/* Sidebar */
+#sidebar {
+    width: 20%;
+    background-color: #f4f4f4;
+    border-right: 1px solid #ddd;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Sidebar scrollable if content overflows */
+}
+
+#sidebar h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+#sidebar a {
+    display: block;
+    color: #007bff;
+    text-decoration: none;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+#sidebar a:hover {
+    text-decoration: underline;
+}
+
+/* Content Section */
+#content {
+    flex: 1;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Content section scrollable */
+}
+
+#content h1 {
+    font-size: 24px;
+    color: #333;
+    margin-top: 0;
+}
+
+.content .result-table th {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.content .result-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.content .result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.content .result-table th,
+.content .result-table td {
+  padding: 5px; /* Reduce padding */
+  text-align: left;
+  border: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  line-height: 1.2; /* Adjust line height for tighter spacing */
+  font-size: 14px; /* Smaller font size */
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.button{
+    margin: 20px 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+/* Bottom Section */
+#bottomSection {
+    height: 50px; /* Fixed height for the bottom section */
+    background-color: #f4f4f4;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    line-height: 50px; /* Vertically center text */
+    color: #666;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* Success message styling */
+.message-success {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+    /* margin-top: 10px; */
+}
+
+/* Error message styling */
+.message-error {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.expand-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 20px;
+}
